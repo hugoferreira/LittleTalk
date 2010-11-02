@@ -19,13 +19,13 @@ namespace LittleTalk {
 		public int ReferenceCount { get; set; }
 		public Class Class { get; set; }
 		public Object Super { get; set; }
-		public List<Object> Variables { get; private set; }
+		public Dictionary<string, Object> Variables { get; private set; }
 		
 		public Object() {
-			this.Variables = new List<Object>();
+			this.Variables = new Dictionary<string, Object>();
 		}
 	}
-	
+		
 	public class ObjTrue: Object {
 	}
 	

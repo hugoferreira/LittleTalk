@@ -15,5 +15,13 @@ namespace LittleTalk {
 			this.Value = i;
 		}
 	}
+	
+	public class Literal: Object {
+		public string Value { get; set; }
+		
+		public Literal(string symbol) {
+			this.Value = symbol;
+		}
+	}
 }
 

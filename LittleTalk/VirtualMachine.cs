@@ -11,54 +11,59 @@ namespace LittleTalk {
 	public class Interpreter {
 		public Interpreter sender, creator;
 		public Object receiver, context, literals;
-		public Stack<object> stack;
+		public Stack<Object> stack;
 		public List<Op> ops;
-		public int opPointer = 0;
 			
 		public Interpreter(Interpreter sender) {
 			this.sender = sender;
-			this.stack = new Stack<object>();
+			this.context = new Object();
+			this.stack = new Stack<Object>();
 			this.ops = new List<Op>();
 		}
 		
 		public void Resume() {
-			while(true) {
-				ops[opPointer++].Execute(this);
-			}
+			ops.ForEach(op => op.Execute(this));
 		}
 	}
 	
 	public abstract class Op {
-		public virtual void Execute(Interpreter ctx) { }
+		public Action<Interpreter> action;
+		public virtual void Execute(Interpreter ctx) { action(ctx); }
 	}
-	
-	public class LoadObjectVar: Op {
-		public int varIndex = 0;
 		
-		public override void Execute (Interpreter ctx) {
-			ctx.stack.Push(ctx.receiver.Variables[varIndex]);
+	public class LoadInstanceVar: Op {
+		public LoadInstanceVar(string token){ 
+			action = (ctx => ctx.stack.Push(ctx.receiver.Variables[token]));
 		}
 	}
 	
-	public class StoreObjectVar: Op {
+	public class LoadConstant: Op {
+		public LoadConstant(int k) {
+			action = (ctx => ctx.stack.Push(new NativeInteger(k)));			
+		}
+	}
+		
+	public class StoreInstanceVar: Op {
+		public StoreInstanceVar(string token) { 
+			action = (ctx => ctx.receiver.Variables[token] = ctx.stack.Pop());
+		}		
 	}
 	
 	public class LoadLocalVar: Op {
-		public int varIndex = 0;
-		
-		public override void Execute (Interpreter ctx) {
-			ctx.stack.Push(ctx.context.Variables[varIndex]);
+		public LoadLocalVar(string token) { 
+			action = (ctx => ctx.stack.Push(ctx.context.Variables[token]));
 		}
 	}
 
 	public class StoreLocalVar: Op {
+		public StoreLocalVar(string token) { 
+			action = (ctx => ctx.context.Variables[token] = ctx.stack.Pop());
+		}
 	}
 	
 	public class LoadLiteral: Op {
-		public int varIndex = 0;
-		
-		public override void Execute (Interpreter ctx) {
-			ctx.stack.Push(ctx.literals.Variables[varIndex]);
+		public LoadLiteral(string token) { 
+			action = (ctx => ctx.stack.Push(ctx.literals.Variables[token]));
 		}
 	}
 	

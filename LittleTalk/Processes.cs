@@ -27,7 +27,9 @@ namespace LittleTalk {
 		
 		private Object Parse(string code) {	
 			int i;
+			if (code.First() == '#') return new Literal(code.Skip(1).ToString());
 			if (int.TryParse(code, out i)) return new NativeInteger(i);
+			
 			return processManager.nil;
 		}
 		
