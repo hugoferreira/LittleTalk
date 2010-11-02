@@ -21,16 +21,26 @@ namespace LittleTalk {
 		public override void Activate () {
 			Console.Write(ToString() + "> ");
 			var input = Console.ReadLine().Trim();
-			if (input.Count() > 0) Console.WriteLine(Parse(input));
-			Console.WriteLine();
+			if (input.Count() > 0) {
+				var i = new Interpreter(null);
+				try {
+					i.ops.AddRange(Parse(input));
+					i.Resume();
+					if (i.stack.Count() > 0) Console.WriteLine(i.stack.Peek());
+				} catch(InvalidOperationException) {
+					Console.WriteLine("Syntax Error.");
+				}
+			}
 		}
 		
-		private Object Parse(string code) {	
+		private List<Op> Parse(string code) {
+			var ops = new List<Op>();
 			int i;
-			if (code.First() == '#') return new Literal(code.Skip(1).ToString());
-			if (int.TryParse(code, out i)) return new NativeInteger(i);
 			
-			return processManager.nil;
+			if (code.First() == '#') ops.Add(new LoadLiteral(code.Skip(1).ToString()));
+			else if (int.TryParse(code, out i)) ops.Add(new LoadConstant(i));
+			else throw new InvalidOperationException();
+			return ops;
 		}
 		
 		public override string ToString () {
