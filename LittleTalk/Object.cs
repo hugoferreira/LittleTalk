@@ -31,5 +31,7 @@ namespace LittleTalk {
 	
 	public class ObjFalse: Object {
 	}
+	
+	public class Nil: Object {
+	}
 }
-

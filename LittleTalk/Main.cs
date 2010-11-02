@@ -8,7 +8,7 @@ namespace LittleTalk {
 			Console.Clear();
 			Console.WriteLine ("Welcome to LittleTalk v0.1a");
 			var pm = new ProcessManager();
-			pm.Processes.Add(new DriverProcess());
+			pm.Processes.Add(new DriverProcess(pm));
 			pm.Start();
 		}
 	}

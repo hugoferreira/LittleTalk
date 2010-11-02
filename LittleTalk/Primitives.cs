@@ -1,15 +1,19 @@
 using System;
 
 namespace LittleTalk {
-	public class NativeValue {
+	public class NativeValue: Object {
 	}
 	
 	public class NativeString: NativeValue {
 		public string Value { get; set; }
 	}
-	
-	public class NativeInteger: NativeValue {
+		
+	public class NativeInteger: Object {
 		public int Value { get; set; }
+		
+		public NativeInteger(int i) {
+			this.Value = i;
+		}
 	}
 }
 
