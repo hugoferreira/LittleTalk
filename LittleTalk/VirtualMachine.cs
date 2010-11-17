@@ -10,12 +10,14 @@ namespace LittleTalk {
 	}
 
 	public class Interpreter {
+		public Process process;
 		public Interpreter sender, creator;
 		public Object receiver, context, literals;
 		public Stack<Object> stack;
 		public List<Op> ops;
 			
-		public Interpreter(Interpreter sender) {
+		public Interpreter(Process p, Interpreter sender) {
+			this.process = p;
 			this.sender = sender;
 			this.context = new Object();
 			this.stack = new Stack<Object>();
@@ -24,21 +26,32 @@ namespace LittleTalk {
 		
 		public virtual void Resume() {
 			ops.ForEach(op => op.Execute(this));
+			Return();
+		}
+		
+		private void Return() {
+			if (sender != null) {
+				//if (!(sender is DriverInterpreter)) {
+					// push object(sender, tempobj);
+					sender.stack.Push(this.stack.Peek());
+					process.ChangeIntepreter(sender);
+				//}
+			} else {
+				// terminate process(runningProcess);
+			}
 		}
 	}
 	
 	public class DriverInterpreter: Interpreter {
-		public DriverInterpreter(): base(null) { 
-			
-		}
-		
+		public DriverInterpreter(Process p): base(p, null) { }
 		public override void Resume () {
 			Console.Write(ToString() + "> ");
 			var input = Console.ReadLine().Trim();
 			if (input.Count() > 0) {
-				var i = new Interpreter(null);
+				var i = new Interpreter(process, this);
 				try {
 					i.ops.AddRange(Parse(input));
+					process.ChangeIntepreter(i);
 					i.Resume();
 					if (i.stack.Count() > 0) Console.WriteLine(i.stack.Peek());
 				} catch(InvalidOperationException) {

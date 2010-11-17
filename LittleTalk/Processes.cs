@@ -10,8 +10,11 @@ namespace LittleTalk {
 		private ProcessManager processManager;
 		public ProcessState ProcessState { get; set; }
 		
-		public Process(ProcessManager pm): this(pm, new DriverInterpreter()) {
-			
+		protected Process() { }
+		
+		public Process(ProcessManager pm) {	
+			this.processManager = pm;
+			this.currentInterpreter = new DriverInterpreter(this);
 		}
 		
 		public Process(ProcessManager pm, Interpreter initialIntepreter) {
@@ -19,14 +22,17 @@ namespace LittleTalk {
 			this.currentInterpreter = initialIntepreter;
 		}
 		
-		public virtual void Activate() {
+		public void Activate() {
 			System.Diagnostics.Debug.WriteLine("Activating Interpreter of Process " + processManager.ToString());
 			this.ProcessState = ProcessState.Running;
 			currentInterpreter.Resume();
 		}
+		
+		public void ChangeIntepreter(Interpreter newInterpreter) {
+			this.currentInterpreter = newInterpreter;
+		}
 	}
 
-	
 	public class ProcessManager {
 		public Object nil;
 		public List<Process> Processes { get; private set; }
@@ -48,4 +54,3 @@ namespace LittleTalk {
 		}
 	}
 }
-

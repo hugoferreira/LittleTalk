@@ -13,6 +13,10 @@ namespace LittleTalk {
 		
 		public NativeInteger(int i) {
 			this.Value = i;
+		}		
+		
+		public override string ToString () {
+			return Value.ToString();
 		}
 	}
 	
