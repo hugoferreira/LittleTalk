@@ -3,50 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace LittleTalk {
+	public enum ProcessState { Suspended, Blocked, Terminated, Running }
+	
 	public class Process {
+		private Interpreter currentInterpreter;
+		private ProcessManager processManager;
+		public ProcessState ProcessState { get; set; }
 		
-		// interpreter
+		public Process(ProcessManager pm): this(pm, new DriverInterpreter()) {
+			
+		}
+		
+		public Process(ProcessManager pm, Interpreter initialIntepreter) {
+			this.processManager = pm;
+			this.currentInterpreter = initialIntepreter;
+		}
 		
 		public virtual void Activate() {
+			System.Diagnostics.Debug.WriteLine("Activating Interpreter of Process " + processManager.ToString());
+			this.ProcessState = ProcessState.Running;
+			currentInterpreter.Resume();
 		}
 	}
-	
-	public class DriverProcess: Process {
-		private ProcessManager processManager;
-		
-		public DriverProcess(ProcessManager pm) {
-			this.processManager = pm;
-		}
-		
-		public override void Activate () {
-			Console.Write(ToString() + "> ");
-			var input = Console.ReadLine().Trim();
-			if (input.Count() > 0) {
-				var i = new Interpreter(null);
-				try {
-					i.ops.AddRange(Parse(input));
-					i.Resume();
-					if (i.stack.Count() > 0) Console.WriteLine(i.stack.Peek());
-				} catch(InvalidOperationException) {
-					Console.WriteLine("Syntax Error.");
-				}
-			}
-		}
-		
-		private List<Op> Parse(string code) {
-			var ops = new List<Op>();
-			int i;
-			
-			if (code.First() == '#') ops.Add(new LoadLiteral(code.Skip(1).ToString()));
-			else if (int.TryParse(code, out i)) ops.Add(new LoadConstant(i));
-			else throw new InvalidOperationException();
-			return ops;
-		}
-		
-		public override string ToString () {
-			return "Driver";
-		}
-	}	
+
 	
 	public class ProcessManager {
 		public Object nil;

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace LittleTalk {
@@ -21,10 +22,41 @@ namespace LittleTalk {
 			this.ops = new List<Op>();
 		}
 		
-		public void Resume() {
+		public virtual void Resume() {
 			ops.ForEach(op => op.Execute(this));
 		}
 	}
+	
+	public class DriverInterpreter: Interpreter {
+		public DriverInterpreter(): base(null) { 
+			
+		}
+		
+		public override void Resume () {
+			Console.Write(ToString() + "> ");
+			var input = Console.ReadLine().Trim();
+			if (input.Count() > 0) {
+				var i = new Interpreter(null);
+				try {
+					i.ops.AddRange(Parse(input));
+					i.Resume();
+					if (i.stack.Count() > 0) Console.WriteLine(i.stack.Peek());
+				} catch(InvalidOperationException) {
+					Console.WriteLine("Syntax Error.");
+				}
+			}
+		}
+		
+		private List<Op> Parse(string code) {
+			var ops = new List<Op>();
+			int i;
+			
+			if (code.First() == '#') ops.Add(new LoadLiteral(code.Skip(1).ToString()));
+			else if (int.TryParse(code, out i)) ops.Add(new LoadConstant(i));
+			else throw new InvalidOperationException();
+			return ops;
+		}
+	}	
 	
 	public abstract class Op {
 		public Action<Interpreter> action;
