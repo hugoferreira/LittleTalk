@@ -28,7 +28,7 @@ namespace LittleTalk {
 			currentInterpreter.Resume();
 		}
 		
-		public void ChangeIntepreter(Interpreter newInterpreter) {
+		public virtual void ChangeIntepreter(Interpreter newInterpreter) {
 			this.currentInterpreter = newInterpreter;
 		}
 	}

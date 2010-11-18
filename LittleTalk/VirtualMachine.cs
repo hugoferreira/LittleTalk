@@ -26,18 +26,13 @@ namespace LittleTalk {
 		
 		public virtual void Resume() {
 			ops.ForEach(op => op.Execute(this));
-			Return();
+			new Return().Execute(this);
 		}
 		
-		private void Return() {
+		public void Return(Object o) {
 			if (sender != null) {
-				//if (!(sender is DriverInterpreter)) {
-					// push object(sender, tempobj);
-					sender.stack.Push(this.stack.Peek());
-					process.ChangeIntepreter(sender);
-				//}
-			} else {
-				// terminate process(runningProcess);
+				sender.stack.Push(o);
+				process.ChangeIntepreter(sender);
 			}
 		}
 	}
@@ -131,6 +126,9 @@ namespace LittleTalk {
 	}
 	
 	public class Return: Op {
+		public Return() {
+			action = (ctx => ctx.Return(ctx.stack.Peek()));
+		}
 	}
 	
 	public class InnerReturn: Op {
