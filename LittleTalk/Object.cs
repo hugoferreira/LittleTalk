@@ -11,8 +11,7 @@ namespace LittleTalk {
 		public Object Name { get; set; }
 		public Object Super { get; set; }
 		public Object Vars { get; set; }
-		public Object Methods { get; set; }
-		
+		public Object Methods { get; set; }	
 	}
 	
 	public class Object {

@@ -15,8 +15,13 @@ namespace LittleTalk {
 			this.Value = i;
 		}		
 		
-		public override string ToString () {
-			return Value.ToString();
+		public override string ToString ()
+		{
+			return Value.ToString ();
+		}
+		
+		public static NativeInteger operator +(NativeInteger c1, NativeInteger c2){ 
+			return new NativeInteger(c1.Value + c2.Value);
 		}
 	}
 	
